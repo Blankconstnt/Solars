@@ -1,325 +1,234 @@
+# 📘 PyTorch 101
 
-# Pytorch **101**
-
-
+# Setup
 import torch
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-print(torch.__version__)
 
-intro to **Tensors**
+print("PyTorch Version:", torch.__version__)
 
-## scalar
+# --- Introduction to Tensors ---
+
+# Scalars
 scalar = torch.tensor(4)
-scalar
+print("Scalar:", scalar, "| Dims:", scalar.ndim, "| Item:", scalar.item())
 
-scalar.ndim
+# Vectors
+vector = torch.tensor([4, 4])
+print("Vector:", vector, "| Dims:", vector.ndim, "| Shape:", vector.shape)
 
-## tensor as normal in
-scalar.item()
+# Matrices
+matrix = torch.tensor([[1, 2], [2, 3]])
+print("Matrix:", matrix, "| Dims:", matrix.ndim, "| Shape:", matrix.shape, "| First row:", matrix[0])
 
-## vector
-vector = torch.tensor([4 , 4])
-vector
+# 3D Tensor
+tensor3D = torch.tensor([[[1, 2, 3], [4, 5, 6], [7, 8, 9]]])
+print("3D Tensor Shape:", tensor3D.shape, "| Dims:", tensor3D.ndim, "| Slice:", tensor3D[0])
 
-vector.ndim
+# Random Tensors
+rand_tensor = torch.rand(2, 3, 4)
+rand_image_tensor = torch.rand(224, 224, 3)
+print("Random Tensor:", rand_tensor.shape, "| Image-like Tensor:", rand_image_tensor.shape)
 
-vector.shape
-
-## matrix
-matrix = torch.tensor([[1, 2],
-                           [2, 3]])
-matrix
-
-matrix.ndim
-
-matrix[0]
-
-matrix.shape
-
-# Tensor
-Tensor = torch.tensor([[[1, 2, 3],
-                       [4, 5, 6],
-                        [7, 8, 9]]])
-Tensor
-
-Tensor.ndim
-
-Tensor.shape
-
-Tensor[0]
-
-Random **Tensor**
-
-### why random tensors?
-## rand numbers --> look at data --> update rand numbers --> repate
-### create a rand tensor of size(3, 4)
-rand_tensor = torch.rand( 2, 3, 4)
-rand_tensor
-
-rand_tensor.ndim
-
-rand_tensor.shape
-
-# rand tensor similar shape to an image
-rand_image_size_tensor = torch.rand(size = (224, 224, 3)) # height, width, colour channels (R, G, B)
-rand_image_size_tensor.shape, rand_image_size_tensor.ndim
-
-## zeros and ones
+# Zeros and Ones
 zeros = torch.zeros(3, 4)
-zeros , zeros.ndim
-
 ones = torch.ones(3, 4)
-ones , ones.ndim
+print("Zeros:", zeros)
+print("Ones:", ones)
+print("Element-wise Mul:", ones * rand_tensor)
 
-zeros * rand_tensor
+# Range and Like-Tensors
+arange0 = torch.arange(1, 11, 2)
+Talike = torch.zeros_like(arange0)
+print("Range:", arange0)
+print("Zeros Like Range:", Talike)
 
-ones * rand_tensor
+# Data Types
+float32 = torch.tensor([1, 2, 3, 4], dtype=torch.float32)
+int16 = torch.tensor([1, 2, 3, 4], dtype=torch.int16)
+print("float32 Tensor:", float32.dtype)
+print("int16 Tensor:", int16.dtype)
 
-ones.dtype
+# Tensor Info
+some_tensor = torch.rand(3, 4)
+print(f"Tensor Info -> DType: {some_tensor.dtype}, Shape: {some_tensor.shape}, Device: {some_tensor.device}")
 
- **Range** **of** **tensors** **&** **tensors**-**like**
-
-## torch.arange
-arange0 = torch.arange(1,11,2)
-
-## tensors-like
-Talike = torch.zeros_like(input = arange0) ## (arange0)
-Talike
-
-**Tensors** **data** **type**
-
-float32= torch.tensor([1, 2, 3, 4], dtype=None)
-float32
-
-int16= torch.tensor([1, 2, 3, 4], dtype=int)
-int16
-
-T= torch.tensor([1, 2, 3, 4],
-                dtype=None, ## data type
-                    device=None, ## cpu, gpu, tpu
-                          requires_grad=False ## trace the gradients
-                                                      )
-T
-
-### Getting info about tensors
-
-## 1. tensors are not on the right data type
-## 2. tensors are not on the right shape
-## 3. tensors are not on the right device
-
-some_tensor =  torch.rand(3, 4)
-some_tensor
-print(f"Datatype:{some_tensor.dtype}")
-print(f"Shape:{some_tensor.shape}") ## shape = size()
-print(f"Device:{some_tensor.device}")
-
-**Manipulating Tensors** (tensors operations)
-- addtion/sub
-- multipliction (element- wise)/div
-- matrix multipliction
-
+# Tensor Operations
 Tensor = torch.tensor([1, 2, 3])
-Tensor + 10
+print("Addition:", Tensor + 10)
+print("Subtraction:", Tensor - 10)
+print("Multiplication:", Tensor * 10)
+print("Division:", Tensor / 10)
+print("Modulo:", Tensor % 2)
 
-Tensor - 10
+# Matrix Multiplication
+print("Element-wise Mul:", Tensor * Tensor)
+print("Dot Product:", torch.matmul(Tensor, Tensor))
 
-Tensor * 10
-
-Tensor / 10
-
-Tensor % 2
-
-**Matrix Multipliction**
-
-Main ways of matrix mul in neural networks and deep learing:
-1.  Element- wise
-2.  Matrix Mul (dot product)
-
-# Element wise mul
-print(Tensor * Tensor)
-
-# the sum of the tensor element
-torch.matmul(Tensor, Tensor)
-
-# by hand (matrix mul)
-# 1*1 + 2*2 + 3*3 =14
-
-%%time
+# Manual Dot Product
 val = 0
 for i in range(len(Tensor)):
-  val+= Tensor[i] * Tensor[i]
-val
+    val += Tensor[i] * Tensor[i]
+print("Manual Dot Product:", val)
 
-%%time
+# Using matmul
 val0 = torch.matmul(Tensor, Tensor)
+print("Matmul Result:", val0)
 
-%%time
+# Large Matrix Multiplication
 randT = torch.rand([10, 10, 10])
-
-%%time
 val2 = torch.matmul(randT, randT)
-val2
+print("Random Tensor Matmul Result:", val2.shape)
 
-There are two main rules that performing matrix mul need to be satisfy:
-1. the **inner imensions** must match
-- '(3, 2) @ (3, 2)' won't work
-- '(2, 3) @ (3, 2)' will work
-- '(3, 2) @ (2, 3)' will work
-2.  the  resulting matrix has the shape of the **outer dimensions**:
-- '(2, 3) @ (3, 2) = (2, 2)'
+# Matrix Mul Rules
+Ta = torch.tensor([[1, 2], [3, 4], [5, 6]])
+Tb = torch.tensor([[1, 2], [3, 4], [5, 6]])
+print("Ta Shape:", Ta.shape, "| Tb Shape:", Tb.shape, "| Tb Transposed:", Tb.T.shape)
 
-##torch.matmul(torch.rand(3, 2), torch.rand(3, 2))
+# Matmul after transpose
+result = torch.mm(Ta, Tb.T)
+print("Matmul Result:", result)
 
-torch.matmul(torch.rand(3, 2), torch.rand(2, 3))
-
-# shapes for mat mul
-Ta= torch.tensor([[1, 2],
-                   [3, 4],
-                      [5, 6]])
-Tb =  torch.tensor([[1, 2],
-                      [3, 4],
-                        [5, 6]])
-Ta.shape, Tb.shape
-
-##torch.mm(Ta, Tb)
-
-# adjust the shape
-# we use tanspose
-Tb, Tb.shape, Tb.T, Tb.T.shape
-
-torch.mm(Ta, Tb.T)
-
-Min, Max, Mean, Sum, etc..(tensor aggregation)
-
+# Aggregation Functions
 X = torch.rand(1, 3, 4)
-X
+print("Min:", X.min(), "| Max:", X.max(), "| Mean:", X.mean(), "| Sum:", X.sum())
 
-X.min(), torch.min(X), X.max(), torch.max(X)
+# Positional Min/Max
+print("ArgMin:", torch.argmin(X), "| ArgMax:", torch.argmax(X))
 
-## mean() dose not work with long int
-## we could use if we encountered a data type error
-##  torch.mean(I/p.type(torch.datatype(float32 usully)))
-torch.mean(X), X.mean()
-
-torch.sum(X), X.sum()
-
-** Positional min, max**
-
-torch.argmin(X), torch.argmax(X)
-
-Reshaping, stacking, squeezing and unsequezzing tensores
-- Reshaping : reshae the input tensor to a defned shape
-- View : Returns a view of an input tensor of a certain shape but keep the same memory as the original tensor
-- Stacing : combine multiple tensors on top of each other (vstack) or side by side (hstack)
-- Squeeze : remove all '1' dimensions from a tensor
-- Unsequeeze : add '1' dimensions to a target tensot
-- permute : Returns a view of the input with dimensions permute(swapped) in a certain way
-
-import torch
-x = torch.arange(1.,11.)
-x, x.shape
-
-## add an extra dimension
-x_reshape = x.reshape((5, 2))
-x_reshape, x_reshape.shape
-
-## view
+# Reshape, View, Stack
+x = torch.arange(1., 11.)
+x_reshape = x.reshape(5, 2)
 z = x.view(5, 2)
-z, z.shape
-
-
-## chainging z changing x they shar the memory
 z[:, 0] = 5
-z, x
+print("Reshape:", x_reshape.shape, "| View:", z.shape, "| Shared Memory:", x)
 
-(views) require the data to be stored contiguously in memory if the data dose not stored continuously it dose not share the memory== (reshape smart)
+x_stack = torch.stack([x, x, x], dim=1)
+print("Stacked:", x_stack.shape)
 
-# stack tensor on top each other
-x_stack = torch.stack([x, x, x, x, x], dim = 1)
-x_stack,x_stack.shape
+# Squeeze & Unsqueeze
+Yy = torch.rand(1, 9)
+print("Squeezed:", Yy.squeeze().shape)
+Yy_unsq = Yy.squeeze().unsqueeze(0)
+print("Unsqueezed:", Yy_unsq.shape)
 
-# torch.squeeze() - removes all single dimensions from a target tensor
-x_reshape, x_reshape.shape
+# Permute
+x_img = torch.rand(224, 224, 3)
+x_permuted = x_img.permute(2, 0, 1)
+print("Original Shape:", x_img.shape, "| Permuted Shape:", x_permuted.shape)
 
-x_reshape.squeeze(),x_reshape.squeeze().shape
-
-Yy = torch.rand(1 ,9)
-Yy, Yy.shape
-
-Yy.squeeze(),Yy.squeeze().shape
-
-## torch.unsqueeze() - adds a single dimension to traget tensor  at a specific dim
-Yy_unsq = Yy.squeeze().unsqueeze(dim = 0)
-Yy_unsq,Yy_unsq.shape
-
-## torch.permute() - rearrange the dimesions of a target tensor in a specificed order
-x_img = torch.rand(size=(224, 224, 3)) # [height, width, colour channels]
-x_permuted = x_img.permute(2, 0, 1) #shift the dim[0, 1, 2] rearranging
-x_img, x_permuted
-
-Indexing (select data from tensors) using Numpy
-
-import torch 
+# Indexing
 X = torch.arange(1, 10).reshape(1, 3, 3)
-X, X.shape
-
-print(X[0][1][2])
-
+print("Index [0][1][2]:", X[0][1][2])
 H = torch.arange(1, 19).reshape(2, 3, 3)
-H, H.shape
+print("Index [1][1][2]:", H[1][1][2])
+print("All:", H[:, :, :])
 
-print(H[1][1][2])
-
-# ":" for selecting all dimensions
-print(H[:, :,:])
-
-# Pytorch tensors & Numpy
-torch to numpy --> torch.from_numpy(ndarray)
-
-numpy to torch --> torch.Tensors.nump()
-
-# numpy to tensors
-import torch as rh
-import numpy as np
-
+# NumPy <-> Torch
 array = np.arange(1., 8.)
-tensor = rh.from_numpy(array) # .type(float32)
-array, array.shape, tensor, tensor.shape
+tensor_from_np = torch.from_numpy(array)
+print("From NumPy:", tensor_from_np)
 
+tensor_to_np = torch.ones(7).numpy()
+print("To NumPy:", tensor_to_np)
 
-array.dtype # dflt tensor(torch) is float32
+# Reproducibility
+torch.manual_seed(42)
+randA = torch.rand(3, 4)
+torch.manual_seed(42)
+randB = torch.rand(3, 4)
+print("Are randA and randB equal?", torch.equal(randA, randB))
+#1. 🧠 What is a Tensor in PyTorch?
+#A tensor in PyTorch is a multi-dimensional array that supports GPU acceleration and automatic differentiation.
+#At the lowest level, tensors are abstractions of memory blocks with defined shapes, data types, and strides.
+#Unlike NumPy arrays, PyTorch tensors are memory-aware and tightly coupled with autograd, which makes them fundamental to all model training.
+#Contiguous memory: PyTorch tensors must often be contiguous in memory to be eligible for certain operations (like view()), meaning the underlying data layout in RAM is sequential.
+#📘 Documentation: https://pytorch.org/docs/stable/tensors.html
 
- # tensors to numpy
-import torch as rh
-import numpy as np
-tensor = torch.ones(7)
-Numpy_tens = tensor.numpy()
-tensor, tensor.shape, Numpy_tens, Numpy_tens.shape
+#2. 🏗️ Tensor Shape Hierarchy
+#Scalar: 0D — simplest tensor, stores a single value
+#Vector: 1D — list of numbers (activations, weights)
+#Matrix: 2D — typical for layer connections or batches
+#Higher-order tensors (3D, 4D, etc.): used in image, audio, video, etc.
+#These shapes reflect how information is structured in models, e.g. a 4D tensor (B, C, H, W) is used in CNNs (Batch, Channel, Height, Width).
 
-# Reproducbility 
-"take random out fo a random"
+#3. ⚙️ Tensor Initialization
+#A. Deterministic vs Stochastic Initialization
+#torch.zeros, torch.ones, torch.full are deterministic → predictable memory layout
+#torch.rand, torch.randn, torch.randint are stochastic → used for simulating entropy or initial model weights
+#Why Random?
+#In ML, weights must begin with random but reasonable values:
+#Prevent symmetry: random weights ensure neurons learn distinct features
+#Avoid zero gradients: especially in deep networks, deterministic zero initialization halts learning
+#Emulate entropy: randomness injects exploration
+#Why Control Random?
+#Random without control = reproducibility chaos.
+#To make experiments deterministic, use:
+torch.manual_seed(42)
+#This sets the internal state of the RNG (random number generator).
+#It ensures that calls like torch.rand(...) return the same values across runs.
+# https://pytorch.org/docs/stable/generated/torch.manual_seed.html
 
-- Shortly, how the neural network learns:
-start with random numbers -> tensors operations -> update random numbers to try and make them better representations of the data -> again -> again - again....
-- To reduce the randomness in neural network and pytorch comes the concept of a **Random seed**.
+# 4. 📐 Memory Layout & Tensor Manipulations
+# A. Reshape vs View
+reshape()#: attempts to return a tensor with the desired shape and reuses data if possible
 
-Essentially what **Random seed** dose is "flavour" the randomness
+view()#: same idea, but requires the tensor to be contiguous in memory
+#If a tensor has been permuted or sliced in a way that breaks memory contiguity, view() will fail.
+#✅ Use .contiguous() before view() to make memory linear again.
+#B. Stack vs Concat vs Unsqueeze/Squeeze
+# stack: Adds new dimension and stacks tensors on it (e.g. 3 x [3] → [3, 3])
+# concat: Merges tensors along existing dimension
+# unsqueeze: Add a dimension of size 1
+# squeeze: Remove all dimensions of size 1
+#These allow control over tensor ranks, useful in model input reshaping or CNN channel alignment.
+# https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor.contiguous
 
-import torch as ch
-randA = ch.rand(3, 4)
-randB = ch.rand(3, 4)
-randA, randB, randA == randB
+#5. 🧮 Matrix Multiplication in ML
+#🔁 Two Modes:
+#Element-wise Multiplication – Used for broadcasting, Hadamard products
+#Dot Product / Matrix Multiplication – Foundation of all neural computation
+# Dot product of 1D tensor
+torch.matmul(x, x)
+#Rules:
+#Inner dimensions must match: (A, B) @ (B, C) = (A, C)
+#Transpose as needed using .T
+#https://pytorch.org/docs/stable/generated/torch.matmul.html
 
+#6. 📊 Aggregations & Reductions
+#Used in both loss calculation and evaluation metrics:
+#mean, sum, min, max
+#argmin, argmax → position of the value
+torch.mean(x.float())  # must convert to float if int
+#📘 Reduction Ops: https://docs.pytorch.org/docs/stable/tensors.html#reduction-ops
 
-# random but reproducible
-import torch as m
-# set random seed
-seed = 42
-m.manual_seed(seed)
-randA = m.rand(3, 4)
-m.manual_seed(seed)
-randB = m.rand(3, 4)m.manual_seed(seed)
-randA, randB, randA == randB
+#7. 🔁 NumPy ↔ PyTorch Interop
+#PyTorch allows seamless conversion with NumPy:
+torch.from_numpy(ndarray)
+tensor.numpy()
+#⚠️ Tensors created from NumPy share memory. If you modify one, the other changes too.
+#📘 NumPy Bridge
 
+#8. 🔬 Device and Type Management
+#tensor.dtype → e.g., torch.float32, torch.int64
+#tensor.device → usually "cpu" or "cuda"
+#Efficient training requires careful planning of:
+#Precision (float32 vs float16) for speed/accuracy tradeoff
+#Device transfers (.to('cuda')) to maximize GPU use
+#📘 Data Types : https://docs.pytorch.org/docs/stable/tensors.html#data-types
+
+#9. 🧪 Reproducibility: The "Flavor" of Randomness
+#In a training pipeline, randomness appears in:
+#Weight initialization
+#Dropout layers
+#Data shuffling
+#Augmentations
+#To debug, benchmark, or compare models, we need determinism:
+torch.manual_seed(seed) #– global PyTorch RNG
+np.random.seed(seed) #– for NumPy
+#random.seed(seed) #– Python’s built-in RNG
+#Additionally:
+#torch.backends.cudnn.deterministic = True
+#torch.backends.cudnn.benchmark = False
+#These ensure deterministic behavior on CUDA for CNNs, trading performance for reproducibility.
